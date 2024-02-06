@@ -21,11 +21,14 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt  # Assuming you have a requirements.txt file for dependencies
 
+      - name: Fetch origin
+        run: git fetch origin master:$GITHUB_HEAD_REF
+
       - name: Run parse.py on each changed file
         id: parse-files
         run: |
           # Get the list of changed files between the base (common ancestor) and the head branch of the pull request
-          for file in $(git diff --name-only $(git merge-base origin/master $GITHUB_HEAD_REF)..$GITHUB_HEAD_REF); do
+          for file in $(git diff --name-only $(git merge-base master $GITHUB_HEAD_REF)..$GITHUB_HEAD_REF); do
             # Check if the file exists and is a regular file (not a directory or special file)
             if [ -f "$file" ]; then
               if [ -e "$file" ]; then  # Check if the file exists (not deleted)
