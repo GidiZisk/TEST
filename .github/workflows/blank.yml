@@ -32,7 +32,10 @@ jobs:
             # Check if the file exists and is a regular file (not a directory or special file)
             if [ -f "$file" ]; then
               if [ -e "$file" ]; then  # Check if the file exists (not deleted)
-                python parse.py "$file" "$(git rev-parse origin/master)/$file"
+                # Fetch the "after" version of the file and save it temporarily
+                git show origin/master:"$file" > temp_after_file
+                python parse.py "$file" "temp_after_file"
+                rm temp_after_file
               else  # If the file is deleted, pass only the "before" version
                 python parse.py "$file"
               fi
