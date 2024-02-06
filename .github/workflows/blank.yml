@@ -27,7 +27,7 @@ jobs:
         id: parse-files
         run: |
           # Get the list of changed files in the pull request
-          for file in $(git diff --name-only test master); do
+          for file in $(git diff --name-only test..master); do
             if [ -f "$file" ]; then
               if [ -e "$file" ]; then
                 # Get the old version of the file
