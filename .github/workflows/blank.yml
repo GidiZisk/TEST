@@ -31,9 +31,12 @@ jobs:
             if [ -f "$file" ]; then
               if [ -e "$file" ]; then
                 # Get the old version of the file
+                echo "$file"
                 git show  origin/master:"$file" > temp_before_file
+                cat temp_before_file
                 # Get the new version of the file
-                #git show HEAD:"$file" > temp_after_file
+                git show HEAD:"$file" > temp_after_file
+                cat temp_after_file
                 # Run the parse script on both versions of the file
                 #python parse.py "temp_before_file" "temp_after_file"
                 #rm temp_before_file temp_after_file
