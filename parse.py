@@ -1,6 +1,7 @@
 import sys
 import yaml
 def main():
+    print("got here")
     yaml_name_before = sys.argv[1]
     yaml_name_after = ""
     if len(sys.argv) > 2:
