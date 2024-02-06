@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v1
       
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -27,7 +27,7 @@ jobs:
         id: parse-files
         run: |
           # Get the list of changed files in the pull request
-          for file in $(git diff --name-only test..master); do
+          for file in $(git diff --name-only origin/master HEAD); do
             if [ -f "$file" ]; then
               if [ -e "$file" ]; then
                 # Get the old version of the file
