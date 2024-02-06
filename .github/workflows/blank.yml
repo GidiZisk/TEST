@@ -27,13 +27,13 @@ jobs:
         id: parse-files
         run: |
           # Get the list of changed files in the pull request
-          for file in $(git diff --name-only origin/test origin/master); do
+          for file in $(git diff --name-only test master); do
             if [ -f "$file" ]; then
               if [ -e "$file" ]; then
                 # Get the old version of the file
-                git show  origin/test:"$file" > temp_before_file
+                git show  test:"$file" > temp_before_file
                 # Get the new version of the file
-                git show origin/master:"$file" > temp_after_file
+                git show master:"$file" > temp_after_file
                 # Run the parse script on both versions of the file
                 python parse.py "temp_before_file" "temp_after_file"
                 rm temp_before_file temp_after_file
