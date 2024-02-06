@@ -1,7 +1,7 @@
-name: Parse Files on Pull Request
+name: Parse Files on Push to Master
 
 on:
-  pull_request:
+  push:
     branches:
       - master
 
@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v2
       
       - name: Fetch origin
-        run: git fetch origin
+        run: git fetch origin master:test
       
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -27,13 +27,14 @@ jobs:
       - name: Run parse.py on each changed file
         id: parse-files
         run: |
-          git checkout $GITHUB_HEAD_REF -- $GITHUB_WORKSPACE
-          for file in $(git diff --name-only origin/master...$GITHUB_HEAD_REF); do
+          git checkout origin/master -- $GITHUB_WORKSPACE
+          for file in $(git diff --name-only origin/test...origin/master); do
             if [ -f "$file" ]; then
               if [ -e "$file" ]; then
+                git show origin/test:"$file" > temp_before_file
                 git show origin/master:"$file" > temp_after_file
-                python parse.py "$file" "temp_after_file"
-                rm temp_after_file
+                python parse.py "temp_before_file" "temp_after_file"
+                rm temp_before_file temp_after_file
               else
                 python parse.py "$file"
               fi
@@ -45,3 +46,4 @@ jobs:
           git config --global user.email "github-actions@users.noreply.github.com"
           git config --global user.name "GitHub Actions"
           git commit -am "Apply changes after parsing"
+          git push origin HEAD:test
