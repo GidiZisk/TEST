@@ -10,7 +10,11 @@ def main():
           print(file.read())
     print(yaml_name_before)
     with open(yaml_name_before, "r") as file:
-          print(file.read())
+          bla= file.read()
+
+    with open(f"123.{yaml_name_before}", "w") as file:
+          file.write(bla)
+          print(bla)
     
 
 
