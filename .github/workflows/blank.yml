@@ -12,37 +12,34 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
+      
+      - name: Fetch origin
+        run: git fetch origin master
+      
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
-
+      
       - name: Install dependencies
-        run: pip install -r requirements.txt  # Assuming you have a requirements.txt file for dependencies
-
-      - name: Fetch origin
-        run: git fetch origin master:$GITHUB_HEAD_REF
-
+        run: pip install -r requirements.txt
+      
       - name: Run parse.py on each changed file
         id: parse-files
         run: |
-          # Get the list of changed files between the base (common ancestor) and the head branch of the pull request
-          for file in $(git diff --name-only $(git merge-base master $GITHUB_HEAD_REF)..$GITHUB_HEAD_REF); do
-            # Check if the file exists and is a regular file (not a directory or special file)
+          git checkout $GITHUB_HEAD_REF -- $GITHUB_WORKSPACE
+          for file in $(git diff --name-only origin/master...$GITHUB_HEAD_REF); do
             if [ -f "$file" ]; then
-              if [ -e "$file" ]; then  # Check if the file exists (not deleted)
-                # Fetch the "after" version of the file and save it temporarily
-                git fetch origin master
+              if [ -e "$file" ]; then
                 git show origin/master:"$file" > temp_after_file
                 python parse.py "$file" "temp_after_file"
                 rm temp_after_file
-              else  # If the file is deleted, pass only the "before" version
+              else
                 python parse.py "$file"
               fi
             fi
           done
-
+      
       - name: Commit changes
         run: |
           git config --global user.email "github-actions@users.noreply.github.com"
