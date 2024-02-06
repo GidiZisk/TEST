@@ -11,7 +11,6 @@ def main():
 
     with open(f"123.{yaml_name_before}", "w") as file:
           file.write(bla)
-          print(bla)
     
 
 
