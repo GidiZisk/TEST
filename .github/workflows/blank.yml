@@ -23,27 +23,43 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       
-      - name: Run parse.py on changed files
-        id: parse-files
+      - name: files that changed
+        id: changed-files
         run: |
           # Get the list of changed files in the pull request
           for file in $(git diff --name-only origin/master HEAD --diff-filter=M); do
-            if [ -f "$file" ]; then
-              if [ -e "$file" ]; then
-                # Get the old version of the file
-                git show  origin/master:"$file" > temp_before_file
-                # Get the new version of the file
-                git show HEAD:"$file" > temp_after_file
-                # Run the parse script on both versions of the file
-                python parse.py "temp_before_file" "temp_after_file"
-                rm temp_before_file temp_after_file
-              else
-                # Run the parse script on the deleted file (old version only)
-                python parse.py "$file"
-              fi
-            fi
+            # Get the old version of the file
+            git show  origin/master:"$file" > temp_before_file
+            # Get the new version of the file
+            git show HEAD:"$file" > temp_after_file
+            # Run the parse script on both versions of the file
+            python parse.py "temp_before_file" "temp_after_file"
+            rm temp_before_file temp_after_file
           done
-      
+      - name: files that added
+        id: added-files
+        run: |
+          # Get the list of changed files in the pull request
+          for file in $(git diff --name-only origin/master HEAD --diff-filter=A); do
+            # Get the new version of the file
+            git show HEAD:"$file" > temp_after_file
+            # Run the parse script on both versions of the file
+            python parse.py "" "temp_after_file"
+            rm temp_after_file
+          done
+
+      - name: files that deleted
+        id: deleted-files
+        run: |
+          # Get the list of changed files in the pull request
+          for file in $(git diff --name-only origin/master HEAD --diff-filter=D); do
+            # Get the old version of the file
+            git show  origin/master:"$file" > temp_before_file
+            # Run the parse script on both versions of the file
+            python parse.py "temp_before_file" ""
+            rm temp_before_file
+          done
+          
       - name: Commit changes
         run: |
           git config --global user.email "github-actions@users.noreply.github.com"
