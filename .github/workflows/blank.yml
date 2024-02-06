@@ -33,6 +33,7 @@ jobs:
             if [ -f "$file" ]; then
               if [ -e "$file" ]; then  # Check if the file exists (not deleted)
                 # Fetch the "after" version of the file and save it temporarily
+                git fetch origin master
                 git show origin/master:"$file" > temp_after_file
                 python parse.py "$file" "temp_after_file"
                 rm temp_after_file
