@@ -19,16 +19,20 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        run: pip install --upgrade pip && pip install -r requirements.txt  # Assuming you have a requirements.txt file for dependencies
+        run: pip install -r requirements.txt  # Assuming you have a requirements.txt file for dependencies
 
       - name: Run parse.py on each changed file
         id: parse-files
         run: |
-          for file in $(git diff --name-only origin/master...$GITHUB_HEAD_REF); do
-            if [ -e "$file" ]; then  # Check if the file exists (not deleted)
-              python parse.py --before "$file" --after "origin/master:$file"
-            else  # If the file is deleted, pass only the "before" version
-              python parse.py --before "$file"
+          # Get the list of changed files between the base (common ancestor) and the head branch of the pull request
+          for file in $(git diff --name-only $(git merge-base origin/master $GITHUB_HEAD_REF)..$GITHUB_HEAD_REF); do
+            # Check if the file exists and is a regular file (not a directory or special file)
+            if [ -f "$file" ]; then
+              if [ -e "$file" ]; then  # Check if the file exists (not deleted)
+                python parse.py --before "$file" --after "origin/master:$file"
+              else  # If the file is deleted, pass only the "before" version
+                python parse.py --before "$file"
+              fi
             fi
           done
 
