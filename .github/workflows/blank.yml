@@ -66,6 +66,8 @@ jobs:
           # Get the list of changed files in the pull request
           for row in $(git diff --name-status origin/master HEAD --diff-filter=R); do
             # Get the old version of the file
+            echo $before_change
+            echo $after_change
             set before_change=$(echo $file | grep -E 'R[0-9]+\b' | cut -f2)
             set after_change=$(echo $file | grep -E 'R[0-9]+\b' | cut -f1)
             # Get the old version of the file
