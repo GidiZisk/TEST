@@ -64,20 +64,23 @@ jobs:
         id: renamed-files
         run: |
           # Get the list of changed files in the pull request
-          echo $(git diff --name-status origin/master HEAD --diff-filter=R)
-          for row in $(git diff --name-status origin/master HEAD --diff-filter=R); do
-            # Get the old version of the file
-            read _ before_change after_change <<< $(echo "$row" | tr -s ' ')
-            echo $before_change
-            echo $after_change
-            # Get the old version of the file
-            #git show  origin/master:"$before_change" > temp_before_file
-            # Get the new version of the file
-            #git show HEAD:"$after_change" > temp_after_file
-            # Run the parse script on both versions of the file
-            #python parse.py "temp_before_file" "temp_after_file"
-            #rm temp_before_file temp_after_file
+          git diff --name-status --find-renames origin/master HEAD | while read -r status old_name new_name; do
+            if [ "$status" = "R" ]; then
+              echo "Old Name: $old_name, New Name: $new_name"
+            fi
           done
+          # echo $(git diff --name-status origin/master HEAD --diff-filter=R)
+          # for row in $(git diff --name-status origin/master HEAD --diff-filter=R); do
+          #   # Get the old version of the file
+          #   echo $row > read -r status old_name new_name
+          #   # Get the old version of the file
+          #   #git show  origin/master:"$before_change" > temp_before_file
+          #   # Get the new version of the file
+          #   #git show HEAD:"$after_change" > temp_after_file
+          #   # Run the parse script on both versions of the file
+          #   #python parse.py "temp_before_file" "temp_after_file"
+          #   #rm temp_before_file temp_after_file
+          # done
           
       - name: Commit changes
         run: |
