@@ -1,9 +1,10 @@
 import sys
 import yaml
 def main():
-    print("got here")
     yaml_name_before = sys.argv[1]
     yaml_name_after = sys.argv[2]
+    print(yaml_name_before)
+    print(yaml_name_after)
 
     if yaml_name_before:
         with open(yaml_name_before, "r") as file:
