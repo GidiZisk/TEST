@@ -59,6 +59,23 @@ jobs:
             python parse.py "temp_before_file" ""
             rm temp_before_file
           done
+
+      - name: files that renamed
+        id: renamed-files
+        run: |
+          # Get the list of changed files in the pull request
+          for row in $(git diff --name-status origin/master HEAD --diff-filter=R); do
+            # Get the old version of the file
+            $before_change= $(echo $file | grep -E 'R[0-9]+\b' | cut -f2)
+            $after_change= $(echo $file | grep -E 'R[0-9]+\b' | cut -f1)
+            # Get the old version of the file
+            git show  origin/master:"$before_change" > temp_before_file
+            # Get the new version of the file
+            git show HEAD:"$after_change" > temp_after_file
+            # Run the parse script on both versions of the file
+            python parse.py "temp_before_file" "temp_after_file"
+            rm temp_before_file temp_after_file
+          done
           
       - name: Commit changes
         run: |
