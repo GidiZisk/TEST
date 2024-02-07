@@ -64,6 +64,7 @@ jobs:
         id: renamed-files
         run: |
           # Get the list of changed files in the pull request
+          echo $(git diff --name-status origin/master HEAD --diff-filter=R)
           for row in $(git diff --name-status origin/master HEAD --diff-filter=R); do
             # Get the old version of the file
             set before_change=$(echo $row | grep -E 'R[0-9]+\b' | cut -f2)
