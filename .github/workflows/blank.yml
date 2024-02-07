@@ -67,7 +67,7 @@ jobs:
           echo $(git diff --name-status origin/master HEAD --diff-filter=R)
           for row in $(git diff --name-status origin/master HEAD --diff-filter=R); do
             # Get the old version of the file
-            read _ before_change after_change <<< $row
+            read _ before_change after_change <<< $(echo "$row" | tr -s ' ')
             echo $before_change
             echo $after_change
             # Get the old version of the file
