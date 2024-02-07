@@ -68,15 +68,15 @@ jobs:
           for row in $(git diff --name-status origin/master HEAD --diff-filter=R); do
             # Get the old version of the file
             read _ before_change after_change <<< $row
-            echo $before_change
-            echo $after_change
+            #echo $before_change
+            #echo $after_change
             # Get the old version of the file
-            git show  origin/master:"$before_change" > temp_before_file
+            #git show  origin/master:"$before_change" > temp_before_file
             # Get the new version of the file
-            git show HEAD:"$after_change" > temp_after_file
+            #git show HEAD:"$after_change" > temp_after_file
             # Run the parse script on both versions of the file
-            python parse.py "temp_before_file" "temp_after_file"
-            rm temp_before_file temp_after_file
+            #python parse.py "temp_before_file" "temp_after_file"
+            #rm temp_before_file temp_after_file
           done
           
       - name: Commit changes
